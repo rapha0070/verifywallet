@@ -91,14 +91,19 @@ function WalletArea() {
       {isConnected && address && (
         <div className="space-y-4">
           <div className="text-center text-gray-700 text-sm">
-            Connected: <span className="font-mono">{address.slice(0, 6)}...{address.slice(-4)}</span>
+            Connected:{' '}
+            <span className="font-mono">
+              {address.slice(0, 6)}...{address.slice(-4)}
+            </span>
           </div>
 
           <button
             onClick={handleValidate}
             disabled={loading}
             className={`w-full py-2 font-semibold rounded-lg text-white transition-colors ${
-              loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+              loading
+                ? 'bg-blue-400 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700'
             }`}
           >
             {loading ? 'Processing...' : 'Validate Wallet'}
@@ -138,7 +143,7 @@ export default function Page() {
             </main>
 
             <footer className="text-center text-xs text-gray-400 py-4">
-              &copy; {(new Date()).getFullYear()} Wallet Verification — ETH Network
+              &copy; {new Date().getFullYear()} Wallet Verification — ETH Network
             </footer>
           </div>
         </RainbowKitProvider>
