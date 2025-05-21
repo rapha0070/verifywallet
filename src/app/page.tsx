@@ -88,7 +88,10 @@ function WalletArea() {
       {isConnected && (
         <div className="space-y-4">
           <div className="text-center text-gray-700 text-sm">
-            Connected: <span className="font-mono">{address.slice(0, 6)}...{address.slice(-4)}</span>
+            Connected:{' '}
+            <span className="font-mono">
+              {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Loading...'}
+            </span>
           </div>
 
           <button
