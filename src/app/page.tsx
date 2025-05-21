@@ -99,7 +99,7 @@ function WalletComponent() {
             {status && <p className="text-center text-sm text-gray-700">{status}</p>}
 
             <button
-              onClick={disconnect}
+              onClick={() => disconnect()}
               className="w-full text-blue-600 border border-blue-600 py-2 rounded-lg hover:bg-blue-50 transition"
             >
               Disconnect Wallet
