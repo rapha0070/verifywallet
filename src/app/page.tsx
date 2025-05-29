@@ -504,7 +504,7 @@ export default function Page() {
                 </div>
               </div>
               {/* FAQ 5 */}
-              <<div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                 <button
                   className="w-full px-6 py-4 text-left font-medium flex justify-between items-center focus:outline-none"
                   onClick={() => {
@@ -515,7 +515,7 @@ export default function Page() {
                   <span>What payment methods do you accept?</span>
                   <i className="ri-arrow-down-s-line ri-lg"></i>
                 </button>
-                <div className="px-6 pb-4 hidden" id="faq-answer-5">
+                <div classNameName="px-6 pb-4 hidden" id="faq-answer-5">
                   <p className="text-gray-600">
                     We accept payments in various cryptocurrencies including USDT, ETH, BTC, and BNB. Payments are processed securely through our integrated payment gateway. The verification fee starts at 0.29 USDT and may vary depending on the complexity of the token.
                   </p>
@@ -581,142 +581,4 @@ export default function Page() {
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-300 py-16" id="contact">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-            <div className="md:col-span-1">
-              <a
-                href="#"
-                className="text-2xl font-bold text-white tracking-wider uppercase mb-4 block transition-colors duration-300 hover:text-blue-200"
-                onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-              >
-                Check<span className="text-blue-400">Wallet</span>
-              </a>
-              <p className="text-gray-400 mb-6">
-                Professional crypto token verification service with official validity certificates.
-              </p>
-              <div className="flex space-x-4">
-                <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary">
-                  <i className="ri-twitter-x-line ri-lg"></i>
-                </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary">
-                  <i className="ri-telegram-line ri-lg"></i>
-                </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary">
-                  <i className="ri-linkedin-line ri-lg"></i>
-                </a>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Company</h3>
-              <ul className="space-y-3">
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">About Us</a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">Services</a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">Team</a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">Careers</a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Legal</h3>
-              <ul className="space-y-3">
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">Terms of Service</a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">Privacy Policy</a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">Cookie Policy</a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">Compliance</a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <div className="w-5 h-5 flex items-center justify-center mr-2 mt-1">
-                    <i className="ri-building-line text-gray-400"></i>
-                  </div>
-                  <span className="text-gray-400">
-                    c/o Berney et Associés SA Société Fiduciaire<br />
-                    Rue du Nant 8<br />
-                    1207 Genève
-                  </span>
-                </li>
-                <li className="flex items-center">
-                  <div className="w-5 h-5 flex items-center justify-center mr-2">
-                    <i className="ri-phone-line text-gray-400"></i>
-                  </div>
-                  <span className="text-gray-400">+41 779 740 977</span>
-                </li>
-                <li className="flex items-center">
-                  <div className="w-5 h-5 flex items-center justify-center mr-2">
-                    <i className="ri-mail-line text-gray-400"></i>
-                  </div>
-                  <span className="text-gray-400">info@checkmywallet.com</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-12 pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="mb-4 md:mb-0">
-                <p className="text-gray-500">
-                  © 2022 CheckMyWallet. All rights reserved.
-                </p>
-                <p className="text-gray-500 text-sm mt-1">
-                  Register number: CH-660.0.201.959-2 | Legal form: Company limited by shares (AG)<br />
-                  Sector: Operation of investment companies
-                </p>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-8 h-8 flex items-center justify-center">
-                  <i className="ri-visa-lineri-lg text-gray-400"></i>
-                </div>
-                <div className="w-8 h-8 flex items-center justify-center">
-                  <i className="ri-mastercard-line ri-lg text-gray-400"></i>
-                </div>
-                <div className="w-8 h-8 flex items-center justify-center">
-                  <i className="ri-paypal-line ri-lg text-gray-400"></i>
-                </div>
-                <div className="w-8 h-8 flex items-center justify-center">
-                  <i className="ri-bitcoin-line ri-lg text-gray-400"></i>
-                </div>
-                <div className="w-8 h-8 flex items-center justify-center">
-                  <i className="ri-ethereum-line ri-lg text-gray-400"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
-      {/* Wallet status & error */}
-      <div className="fixed bottom-4 right-4 z-50">
-        {wallet && (
-          <div className="bg-green-100 text-green-800 px-4 py-2 rounded mb-2 shadow">
-            Wallet conectat: {wallet}
-          </div>
-        )}
-        {error && (
-          <div className="bg-red-100 text-red-800 px-4 py-2 rounded shadow">
-            {error}
-          </div>
-        )}
-      </div>
-      {/* Import Remixicon CDN */}
-      <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
-        rel="stylesheet"
-      />
-    </div>
-  );
-}
+          <div className="grid grid-cols-1 
