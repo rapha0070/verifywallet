@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 
-// Butonul de verificare cu logica ta
 function VerificationButton() {
   const [status, setStatus] = useState("Verification");
   const [color, setColor] = useState("#1a73e8");
@@ -170,7 +169,7 @@ export default function Page() {
             </div>
           </div>
           <div className="mt-16 text-center">
-            <button className="bg-primary text-white px-8 py-4 rounded font-medium text-lg hover:bg-blue-600 whitespace-nowrap">
+            <button className="bg-primary text-white px-8 py-4rounded font-medium text-lg hover:bg-blue-600 whitespace-nowrap">
               Check Your Wallet
             </button>
             <VerificationButton />
@@ -524,7 +523,7 @@ export default function Page() {
               {/* FAQ 5 */}
               <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                 <button
-                  className="w-full px-6 py-4 text-left font-medium flex justify-between items-center focus:outline-none"
+                  className="w-full px-6 py-4 text-left font-medium flexjustify-between items-center focus:outline-none"
                   onClick={() => {
                     const el = document.getElementById("faq-answer-5");
                     const icon = document.getElementById("faq-icon-5");
@@ -536,7 +535,7 @@ export default function Page() {
                   }}
                 >
                   <span>What payment methods do you accept?</span>
-                  <i className="ri-arrow-down-s-line ri-lg"id="faq-icon-5"></i>
+                  <i className="ri-arrow-down-s-line ri-lg" id="faq-icon-5"></i>
                 </button>
                 <div className="px-6 pb-4 hidden" id="faq-answer-5">
                   <p className="text-gray-600">
