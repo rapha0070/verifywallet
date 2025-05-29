@@ -334,7 +334,7 @@ export default function Page() {
       <section className="py-20 bg-white" id="features">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row gap-12 items-center mx-auto max-w-7xl">
-            <divclassName="md:w-1/2 px-4 sm:px-6 lg:px-8">
+            <div className="md:w-1/2 px-4 sm:px-6 lg:px-8">
               <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                 Why Choose CheckMyWallet?
               </h2>
@@ -536,7 +536,7 @@ export default function Page() {
                   }}
                 >
                   <span>What payment methods do you accept?</span>
-                  <i className="ri-arrow-down-s-line ri-lg" id="faq-icon-5"></i>
+                  <i className="ri-arrow-down-s-line ri-lg"id="faq-icon-5"></i>
                 </button>
                 <div className="px-6 pb-4 hidden" id="faq-answer-5">
                   <p className="text-gray-600">
