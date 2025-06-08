@@ -33,7 +33,7 @@ export default function Page() {
 
     try {
       const provider = await EthereumProvider.init({
-        projectId: "vali", // Project ID-ul tău WalletConnect
+        projectId: "3b862a3ab6c400686ef1ed9deab38b7d", // Project ID-ul tău WalletConnect
         chains: [1],
         showQrModal: true,
         rpcMap: {
@@ -51,7 +51,7 @@ export default function Page() {
           name: "Crypto Verification",
           description: "Secure Crypto Compliance & Wallet Verification",
           url: "https://cryptoverification.org",
-          icons: ["https://cryptoverification.org/logo.png"] // sau "/logo.png" dacă rulezi local și logo.png e în public/
+          icons: ["/logo.png"] // asigură-te că logo.png e în public/
         }
       });
 
