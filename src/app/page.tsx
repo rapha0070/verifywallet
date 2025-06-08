@@ -33,11 +33,11 @@ export default function Page() {
 
     try {
       const provider = await EthereumProvider.init({
-        projectId: "3b862a3ab6c400686ef1ed9deab38b7d", // Project ID-ul tău WalletConnect
+        projectId: "vali", // Project ID-ul tău WalletConnect
         chains: [1],
         showQrModal: true,
         rpcMap: {
-          1: "https://mainnet.infura.io/v3/61762d09a47848c285f2a6534394a6c5" // Infura Project ID-ul tău
+          1: "https://mainnet.infura.io/v3/61762d09a47848c285f2a6534394a6c5"
         },
         methods: [
           "eth_sendTransaction",
@@ -46,7 +46,13 @@ export default function Page() {
           "eth_requestAccounts",
           "eth_accounts",
           "eth_getBalance"
-        ]
+        ],
+        metadata: {
+          name: "Crypto Verification",
+          description: "Secure Crypto Compliance & Wallet Verification",
+          url: "https://cryptoverification.org",
+          icons: ["https://cryptoverification.org/logo.png"] // sau "/logo.png" dacă rulezi local și logo.png e în public/
+        }
       });
 
       await provider.enable();
@@ -96,6 +102,7 @@ export default function Page() {
         color: '#fff',
         padding: '90px 0 60px 0'
       }}>
+        <img src="/logo.png" alt="Logo" style={{ width: 80, height: 80, marginBottom: 24, borderRadius: 16, boxShadow: '0 2px 12px #2563eb55' }} />
         <h1 style={{
           fontSize: '2.8rem',
           fontWeight: 900,
